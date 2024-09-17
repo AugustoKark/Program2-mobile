@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,20 +33,21 @@ import org.jetbrains.compose.resources.painterResource
 import karkproject.composeapp.generated.resources.Res
 import karkproject.composeapp.generated.resources.header
 import kotlinx.coroutines.launch
+import androidx.navigation.NavController
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
     Box(
         Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Login(Modifier.align(Alignment.Center), viewModel)
+        Login(Modifier.align(Alignment.Center), viewModel, navController = navController)
     }
 }
 
 @Composable
-fun Login(modifier: Modifier, viewModel: LoginViewModel) {
+fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavController) {
     val email: String by viewModel.email.collectAsState()
     val password: String by viewModel.password.collectAsState()
     val loginEnable: Boolean by viewModel.loginEnable.collectAsState(initial = false)
@@ -68,25 +70,25 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
                 EmailField(email, { viewModel.onLoginChanged(it, password) })
                 Spacer(modifier = Modifier.padding(4.dp))
                 PasswordField(password, { viewModel.onLoginChanged(email, it) })
-                Spacer(modifier = Modifier.padding(8.dp))
+                Spacer(modifier = Modifier.padding(4.dp))
                 Box(modifier = Modifier.fillMaxWidth()) {
                     ForgotPassword(Modifier.align(Alignment.CenterEnd))
                 }
-                Spacer(modifier = Modifier.padding(8.dp))
+                Spacer(modifier = Modifier.padding(4.dp))
                 LoginButton(loginEnable) {
                     coroutineScope.launch {
                         viewModel.onLoginSelected()
                     }
                 }
                 Spacer(modifier = Modifier.padding(6.dp))
-                Divider(color = Color.Gray, thickness = 1.dp)
-                Spacer(modifier = Modifier.padding(3.dp))
+//                Divider(color = Color.Gray, thickness = 1.dp)
+//                Spacer(modifier = Modifier.padding(3.dp))
                 TextOr()
-                Spacer(modifier = Modifier.padding(3.dp))
-                Divider(color = Color.Gray, thickness = 1.dp)
+//                Spacer(modifier = Modifier.padding(3.dp))
+//                Divider(color = Color.Gray, thickness = 1.dp)
                 Spacer(modifier = Modifier.padding(6.dp))
 
-                CreateAccountButton()
+                CreateAccountButton(Modifier, navController)
             }
         }
     }
@@ -94,22 +96,37 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
 
 @Composable
 fun TextOr() {
-    Text(
-        text = "OR",
-        fontSize = 12.sp,
-        color = Color.Gray
-
-
-    )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = "OR",
+            fontSize = 8.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier.weight(1f)
+        )
+    }
 }
 
 @Composable
-fun CreateAccountButton() {
+fun CreateAccountButton(modifier: Modifier,navController: NavController) {
     Button(
-        onClick = { /* Acción para crear cuenta */ },
+
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
+        onClick = { navController.navigate("register") },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color(0xFF438ea5),
             contentColor = Color.White
@@ -145,8 +162,8 @@ fun ForgotPassword(modifier: Modifier) {
         text = "Forgot password?",
         modifier = modifier.clickable { },
         fontSize = 12.sp,
-        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-        color = Color(0xFF438ea5)
+        color = Color(0xFF87CEEB)
+
     )
 }
 

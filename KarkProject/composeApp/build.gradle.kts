@@ -55,6 +55,8 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.navigation.compose)
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -101,6 +103,7 @@ android {
 }
 dependencies {
     implementation(libs.androidx.lifecycle.livedata.core.ktx)
+    implementation(libs.androidx.navigation.compose)
 }
 
 compose.desktop {
