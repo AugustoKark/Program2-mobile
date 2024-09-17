@@ -99,6 +99,9 @@ android {
         debugImplementation(compose.uiTooling)
     }
 }
+dependencies {
+    implementation(libs.androidx.lifecycle.livedata.core.ktx)
+}
 
 compose.desktop {
     application {
