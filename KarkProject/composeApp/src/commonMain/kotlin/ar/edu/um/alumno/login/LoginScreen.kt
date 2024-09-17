@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -32,64 +33,74 @@ import karkproject.composeapp.generated.resources.Res
 import karkproject.composeapp.generated.resources.header
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun LoginScreen(viewModel: LoginViewModel) {
-
     Box(
         Modifier
-        .fillMaxSize()
-        .padding(16.dp)){
-            Login(Modifier.align(Alignment.Center), viewModel)
-
-        }
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Login(Modifier.align(Alignment.Center), viewModel)
+    }
 }
-
 
 @Composable
 fun Login(modifier: Modifier, viewModel: LoginViewModel) {
-
-    val email : String by viewModel.email.collectAsState()
-    val password : String by viewModel.password.collectAsState()
-    val loginEnable : Boolean by viewModel.loginEnable.collectAsState(initial = false)
-    val isLoading : Boolean by viewModel.isLoading.collectAsState(initial = false)
+    val email: String by viewModel.email.collectAsState()
+    val password: String by viewModel.password.collectAsState()
+    val loginEnable: Boolean by viewModel.loginEnable.collectAsState(initial = false)
+    val isLoading: Boolean by viewModel.isLoading.collectAsState(initial = false)
     val coroutineScope = rememberCoroutineScope()
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-
-
-    }else{
-        Column (modifier = modifier
-            .fillMaxSize(),
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeaderImage(modifier.align(Alignment.CenterHorizontally))
-            Spacer(modifier = Modifier.padding(16.dp))
-            EmailField(email, { viewModel.onLoginChanged(it, password) })
-            Spacer(modifier = Modifier.padding(4.dp))
-            PasswordField(password, { viewModel.onLoginChanged(email, it) })
-            Spacer(modifier = Modifier.padding(8.dp))
-            ForgotPassword(Modifier.align(Alignment.End))
-            Spacer(modifier = Modifier.padding(8.dp))
-            LoginButton(loginEnable) {
-                coroutineScope.launch {
-                    viewModel.onLoginSelected()
+            item {
+                HeaderImage(Modifier)
+                Spacer(modifier = Modifier.padding(16.dp))
+                EmailField(email, { viewModel.onLoginChanged(it, password) })
+                Spacer(modifier = Modifier.padding(4.dp))
+                PasswordField(password, { viewModel.onLoginChanged(email, it) })
+                Spacer(modifier = Modifier.padding(8.dp))
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    ForgotPassword(Modifier.align(Alignment.CenterEnd))
                 }
+                Spacer(modifier = Modifier.padding(8.dp))
+                LoginButton(loginEnable) {
+                    coroutineScope.launch {
+                        viewModel.onLoginSelected()
+                    }
+                }
+                Spacer(modifier = Modifier.padding(6.dp))
+                Divider(color = Color.Gray, thickness = 1.dp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                TextOr()
+                Spacer(modifier = Modifier.padding(3.dp))
+                Divider(color = Color.Gray, thickness = 1.dp)
+                Spacer(modifier = Modifier.padding(6.dp))
+
+                CreateAccountButton()
             }
-            Spacer(modifier = Modifier.padding(4.dp))
-            Divider(color = Color.Gray, thickness = 1.dp)
-            Spacer(modifier = Modifier.padding(8.dp))
-            CreateAccountButton()
         }
-
-
-
-
     }
+}
 
+@Composable
+fun TextOr() {
+    Text(
+        text = "OR",
+        fontSize = 12.sp,
+        color = Color.Gray
+
+
+    )
 }
 
 @Composable
@@ -132,19 +143,17 @@ fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
 fun ForgotPassword(modifier: Modifier) {
     Text(
         text = "Forgot password?",
-
-        modifier = modifier.clickable {  },
+        modifier = modifier.clickable { },
         fontSize = 12.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
         color = Color(0xFF438ea5)
-
     )
 }
 
 @Composable
 fun PasswordField(password: String, onTextFieldChange: (String) -> Unit) {
     TextField(
-        value = password , onValueChange = {onTextFieldChange(it)},
+        value = password, onValueChange = { onTextFieldChange(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Password") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -160,9 +169,9 @@ fun PasswordField(password: String, onTextFieldChange: (String) -> Unit) {
 }
 
 @Composable
-fun EmailField(email: String , onTextFieldChange: (String) -> Unit) {
+fun EmailField(email: String, onTextFieldChange: (String) -> Unit) {
     TextField(
-        value = email , onValueChange = {onTextFieldChange(it)},
+        value = email, onValueChange = { onTextFieldChange(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Email") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -174,11 +183,7 @@ fun EmailField(email: String , onTextFieldChange: (String) -> Unit) {
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         )
-        )
-
-
-
-
+    )
 }
 
 @Composable
@@ -186,24 +191,21 @@ fun HeaderImage(modifier: Modifier) {
     Column(
         modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "TechMarket",
+        Text(
+            text = "TechMarket",
             style = MaterialTheme.typography.h2.copy(
                 color = Color(0xFF438ea5),
                 fontSize = 60.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-            ))
+            )
+        )
         Spacer(modifier = Modifier.padding(8.dp))
         Image(
-        painter = painterResource( Res.drawable.header),
-        contentDescription = "Header",
-        modifier = modifier
-            .size(200.dp)
-            .clip(RoundedCornerShape(16.dp)))
+            painter = painterResource(Res.drawable.header),
+            contentDescription = "Header",
+            modifier = modifier
+                .size(200.dp)
+                .clip(RoundedCornerShape(16.dp))
+        )
     }
-
-
 }
-
-
-
-
