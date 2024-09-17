@@ -1,4 +1,4 @@
-package ar.edu.um.alumno.ui
+package ar.edu.um.alumno.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,6 +19,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
@@ -29,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import karkproject.composeapp.generated.resources.Res
 import karkproject.composeapp.generated.resources.header
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -51,23 +52,61 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
     val email : String by viewModel.email.collectAsState()
     val password : String by viewModel.password.collectAsState()
     val loginEnable : Boolean by viewModel.loginEnable.collectAsState(initial = false)
-    Column (modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        HeaderImage(modifier.align(Alignment.CenterHorizontally))
-        Spacer(modifier = Modifier.padding(16.dp))
-        EmailField(email,{viewModel.onLoginChanged(it, password)})
-        Spacer(modifier = Modifier.padding(4.dp))
-        PasswordField(password, {viewModel.onLoginChanged(email, it)})
-        Spacer(modifier = Modifier.padding(8.dp))
-        ForgotPassword(Modifier.align(Alignment.End))
-        Spacer(modifier = Modifier.padding(16.dp))
-        LoginButton(loginEnable) {
-            viewModel.onLoginSelected()
+    val isLoading : Boolean by viewModel.isLoading.collectAsState(initial = false)
+    val coroutineScope = rememberCoroutineScope()
+
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
+
+
+    }else{
+        Column (modifier = modifier
+            .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            HeaderImage(modifier.align(Alignment.CenterHorizontally))
+            Spacer(modifier = Modifier.padding(16.dp))
+            EmailField(email, { viewModel.onLoginChanged(it, password) })
+            Spacer(modifier = Modifier.padding(4.dp))
+            PasswordField(password, { viewModel.onLoginChanged(email, it) })
+            Spacer(modifier = Modifier.padding(8.dp))
+            ForgotPassword(Modifier.align(Alignment.End))
+            Spacer(modifier = Modifier.padding(8.dp))
+            LoginButton(loginEnable) {
+                coroutineScope.launch {
+                    viewModel.onLoginSelected()
+                }
+            }
+            Spacer(modifier = Modifier.padding(4.dp))
+            Divider(color = Color.Gray, thickness = 1.dp)
+            Spacer(modifier = Modifier.padding(8.dp))
+            CreateAccountButton()
+        }
+
 
 
 
     }
 
+}
+
+@Composable
+fun CreateAccountButton() {
+    Button(
+        onClick = { /* Acción para crear cuenta */ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(0xFF438ea5),
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Text(text = "Create Account", color = Color.White)
+    }
 }
 
 @Composable

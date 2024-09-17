@@ -1,4 +1,4 @@
-package ar.edu.um.alumno.ui
+package ar.edu.um.alumno.login
 
 import androidx.lifecycle.ViewModel
 
@@ -34,9 +34,9 @@ class LoginViewModel : ViewModel() {
 
     private fun isValidEmail(email: String): Boolean = emailPattern.matches(email)
 
-    fun onLoginSelected() {
+    suspend fun onLoginSelected() {
         _isLoading.value = true
-
+        delay(2000)
         _isLoading.value = false
     }
 }
