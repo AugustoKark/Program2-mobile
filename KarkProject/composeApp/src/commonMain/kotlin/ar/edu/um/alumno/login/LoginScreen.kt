@@ -51,48 +51,53 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavContr
     val email: String by viewModel.email.collectAsState()
     val password: String by viewModel.password.collectAsState()
     val loginEnable: Boolean by viewModel.loginEnable.collectAsState(initial = false)
-    val isLoading: Boolean by viewModel.isLoading.collectAsState(initial = false)
     val coroutineScope = rememberCoroutineScope()
 
-    if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-    } else {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                HeaderImage(Modifier)
-                Spacer(modifier = Modifier.padding(16.dp))
-                EmailField(email, { viewModel.onLoginChanged(it, password) })
-                Spacer(modifier = Modifier.padding(4.dp))
-                PasswordField(password, { viewModel.onLoginChanged(email, it) })
-                Spacer(modifier = Modifier.padding(4.dp))
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    ForgotPassword(Modifier.align(Alignment.CenterEnd))
-                }
-                Spacer(modifier = Modifier.padding(4.dp))
-                LoginButton(loginEnable) {
-                    coroutineScope.launch {
-                        viewModel.onLoginSelected()
-                    }
-                }
-                Spacer(modifier = Modifier.padding(6.dp))
-//                Divider(color = Color.Gray, thickness = 1.dp)
-//                Spacer(modifier = Modifier.padding(3.dp))
-                TextOr()
-//                Spacer(modifier = Modifier.padding(3.dp))
-//                Divider(color = Color.Gray, thickness = 1.dp)
-                Spacer(modifier = Modifier.padding(6.dp))
-
-                CreateAccountButton(Modifier, navController)
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
+            HeaderImage(Modifier)
+            Spacer(modifier = Modifier.padding(16.dp))
+            EmailField(email, { viewModel.onLoginChanged(it, password) })
+            Spacer(modifier = Modifier.padding(4.dp))
+            PasswordField(password, { viewModel.onLoginChanged(email, it) })
+            Spacer(modifier = Modifier.padding(4.dp))
+            Box(modifier = Modifier.fillMaxWidth()) {
+                ForgotPassword(Modifier.align(Alignment.CenterEnd))
             }
+            Spacer(modifier = Modifier.padding(4.dp))
+            LoginButton(loginEnable, navController)
+
+            Spacer(modifier = Modifier.padding(6.dp))
+            TextOr()
+            Spacer(modifier = Modifier.padding(6.dp))
+            CreateAccountButton(Modifier, navController)
         }
     }
 }
+
+@Composable
+fun LoginButton(loginEnable: Boolean, navController: NavController) {
+    Button(
+
+        onClick = { navController.navigate("productos") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (loginEnable) Color(0xFF438ea5) else Color(0xFFB0B0B0),
+            contentColor = Color.White,
+        ),
+        enabled = loginEnable,
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Text(text = "Login", color = Color.White)
+    }
+}
+
 
 @Composable
 fun TextOr() {
@@ -137,24 +142,24 @@ fun CreateAccountButton(modifier: Modifier,navController: NavController) {
     }
 }
 
-@Composable
-fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
-    Button(
-        onClick = { onLoginSelected() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(0xFF438ea5),
-            disabledBackgroundColor = Color(0xFFB0B0B0),
-            contentColor = Color.White,
-            disabledContentColor = Color.White,
-        ), enabled = loginEnable,
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Text(text = "Login", color = Color.White)
-    }
-}
+//@Composable
+//fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
+//    Button(
+//        onClick = { onLoginSelected() },
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(48.dp),
+//        colors = ButtonDefaults.buttonColors(
+//            backgroundColor = Color(0xFF438ea5),
+//            disabledBackgroundColor = Color(0xFFB0B0B0),
+//            contentColor = Color.White,
+//            disabledContentColor = Color.White,
+//        ), enabled = loginEnable,
+//        shape = RoundedCornerShape(16.dp)
+//    ) {
+//        Text(text = "Login", color = Color.White)
+//    }
+//}
 
 @Composable
 fun ForgotPassword(modifier: Modifier) {

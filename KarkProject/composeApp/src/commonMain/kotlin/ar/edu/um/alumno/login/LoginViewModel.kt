@@ -34,9 +34,12 @@ class LoginViewModel : ViewModel() {
 
     private fun isValidEmail(email: String): Boolean = emailPattern.matches(email)
 
-    suspend fun onLoginSelected() {
+    suspend fun onLoginSelected(): Boolean {
         _isLoading.value = true
-        delay(2000)
+        // Simulación de una llamada de inicio de sesión
+        delay(2000)  // Simula un tiempo de espera para la llamada
         _isLoading.value = false
+
+        return email.value == "user@example.com" && password.value == "password123"  // Simula un login exitoso
     }
 }
