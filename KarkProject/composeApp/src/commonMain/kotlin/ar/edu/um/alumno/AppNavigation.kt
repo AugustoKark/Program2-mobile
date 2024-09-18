@@ -1,7 +1,10 @@
 package ar.edu.um.alumno
 
+import AdicionalesScreen
 import ProductoSeleccionScreen
+import ProductoViewModel
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,7 +14,7 @@ import ar.edu.um.alumno.createaccount.RegisterScreen
 import ar.edu.um.alumno.createaccount.RegisterViewModel
 import ar.edu.um.alumno.login.LoginScreen
 import ar.edu.um.alumno.login.LoginViewModel
-import ar.edu.um.alumno.selectProduct.AdicionalesScreen
+
 
 
 @Composable
@@ -32,7 +35,7 @@ fun AppNavigation() {
         }
         composable("adicionales/{productoId}") { backStackEntry ->
             val productoId = backStackEntry.arguments?.getString("productoId")?.toInt() ?: 0
-            AdicionalesScreen(productoId = productoId)
+            AdicionalesScreen(productoId = productoId, viewModel = viewModel(), navController = navController)
         }
 
     }
