@@ -32,6 +32,9 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import karkproject.composeapp.generated.resources.Res
 import karkproject.composeapp.generated.resources.header
+import karkproject.composeapp.generated.resources.laptop
+
+
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
 

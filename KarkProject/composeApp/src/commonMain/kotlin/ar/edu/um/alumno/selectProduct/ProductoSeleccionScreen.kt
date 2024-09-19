@@ -13,6 +13,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
+import karkproject.composeapp.generated.resources.Res
+import karkproject.composeapp.generated.resources.laptop
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import karkproject.composeapp.generated.resources.header
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoViewModel = viewModel()) {
@@ -45,6 +52,17 @@ fun ProductoCard(producto: Producto, navController: NavController) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+
+            Image(
+                painter = painterResource(Res.drawable.laptop),
+                contentDescription = "Laptop",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            )
+
+
+
             // Nombre del producto
             Text(
                 text = producto.nombre,
