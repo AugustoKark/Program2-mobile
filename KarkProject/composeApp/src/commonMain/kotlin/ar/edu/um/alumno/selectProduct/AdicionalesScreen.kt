@@ -18,22 +18,22 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
     val producto = productos.find { it.id == productoId }
 
     var selectedOptions = remember { mutableStateMapOf<Int, Opcion>() }
-
-
     var selectedAdicionales = remember { mutableStateListOf<Adicional>() }
     var totalPrice by remember { mutableStateOf(producto?.precioBase ?: 0.0) }
 
     // Función para actualizar el precio total
     fun actualizarPrecioTotal() {
         val personalizacionPrecio = selectedOptions.values.sumOf { it.precioAdicional }
+        val basePriceWithPersonalizations = (producto?.precioBase ?: 0.0) + personalizacionPrecio
+
         val adicionalesPrecio = selectedAdicionales.sumOf { adicional ->
-            if (adicional.precioGratis != -1.0 && totalPrice > adicional.precioGratis) {
+            if (adicional.precioGratis != -1.0 && basePriceWithPersonalizations > adicional.precioGratis) {
                 0.0
             } else {
                 adicional.precio
             }
         }
-        totalPrice = (producto?.precioBase ?: 0.0) + personalizacionPrecio + adicionalesPrecio
+        totalPrice = basePriceWithPersonalizations + adicionalesPrecio
     }
 
     producto?.let { prod ->
@@ -50,10 +50,8 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                 style = MaterialTheme.typography.h4.copy(
                     color = Color(0xFF438ea5),
                     fontSize = 22.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-//                    modifier = Modifier.padding(bottom = 16.dp)
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
-
             )
 
             // Para cada personalización, creamos un botón
@@ -63,7 +61,6 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                         personalizacion = personalizacion,
                         selectedOptions = selectedOptions,
                         onOptionSelected = { actualizarPrecioTotal() }
-
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -78,6 +75,8 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                 modifier = Modifier.padding(vertical = 8.dp)
             )
             prod.adicionales.forEach { adicional ->
+                // Verificar si el adicional es gratis según la condición de precio
+                val esGratis = adicional.precioGratis != -1.0 && totalPrice > adicional.precioGratis
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
@@ -93,7 +92,11 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                             actualizarPrecioTotal()  // Actualiza el precio al seleccionar adicionales
                         }
                     )
-                    Text(text = "${adicional.nombre} - ${adicional.precio} ${prod.moneda}")
+                    // Mostrar el texto con el precio o "Gratis" según la condición
+                    Text(
+                        text = "${adicional.nombre} - ${String.format("%.2f", adicional.precio)} ${prod.moneda}" +
+                                if (esGratis) " (Gratis)" else ""
+                    )
                 }
             }
 
@@ -108,7 +111,8 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(0xFF438ea5),  // Cambiar color del botón "Buy"
-                    contentColor = Color.White)
+                    contentColor = Color.White
+                )
             ) {
                 Text(text = "Confirmar selección")
             }
@@ -156,7 +160,6 @@ fun PersonalizacionButton(
                     expanded = false
                     onOptionSelected()
                 }) {
-//                    Text(text = opcion.nombre)
                     Text(text = "${opcion.nombre} (+${String.format("%.2f", opcion.precioAdicional)} USD)")
                 }
             }
