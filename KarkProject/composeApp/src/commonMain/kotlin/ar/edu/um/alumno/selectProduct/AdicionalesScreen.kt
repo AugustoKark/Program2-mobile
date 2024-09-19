@@ -5,16 +5,36 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
 fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: ProductoViewModel = viewModel()) {
     val productos by viewModel.productos.collectAsState()
     val producto = productos.find { it.id == productoId }
 
-    var selectedOptions = remember { mutableStateMapOf<Int, Opcion>() }  // Guardar opciones seleccionadas
+    var selectedOptions = remember { mutableStateMapOf<Int, Opcion>() }
+
+
+    var selectedAdicionales = remember { mutableStateListOf<Adicional>() }
+    var totalPrice by remember { mutableStateOf(producto?.precioBase ?: 0.0) }
+
+    // Función para actualizar el precio total
+    fun actualizarPrecioTotal() {
+        val personalizacionPrecio = selectedOptions.values.sumOf { it.precioAdicional }
+        val adicionalesPrecio = selectedAdicionales.sumOf { adicional ->
+            if (adicional.precioGratis != -1.0 && totalPrice > adicional.precioGratis) {
+                0.0
+            } else {
+                adicional.precio
+            }
+        }
+        totalPrice = (producto?.precioBase ?: 0.0) + personalizacionPrecio + adicionalesPrecio
+    }
 
     producto?.let { prod ->
         Column(
@@ -26,9 +46,14 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
         ) {
             // Título
             Text(
-                text = "Selecciona las personalizaciones para ${prod.nombre}",
-                style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(bottom = 16.dp)
+                text = "Precio Total: ${producto.moneda} ${String.format("%.2f", totalPrice)}",
+                style = MaterialTheme.typography.h4.copy(
+                    color = Color(0xFF438ea5),
+                    fontSize = 22.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+//                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
             )
 
             // Para cada personalización, creamos un botón
@@ -36,9 +61,39 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                 items(prod.personalizaciones) { personalizacion ->
                     PersonalizacionButton(
                         personalizacion = personalizacion,
-                        selectedOptions = selectedOptions
+                        selectedOptions = selectedOptions,
+                        onOptionSelected = { actualizarPrecioTotal() }
+
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Adicionales con CheckBoxes
+            Text(
+                text = "Adicionales:",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            prod.adicionales.forEach { adicional ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                ) {
+                    Checkbox(
+                        checked = selectedAdicionales.contains(adicional),
+                        onCheckedChange = { isChecked ->
+                            if (isChecked) {
+                                selectedAdicionales.add(adicional)
+                            } else {
+                                selectedAdicionales.remove(adicional)
+                            }
+                            actualizarPrecioTotal()  // Actualiza el precio al seleccionar adicionales
+                        }
+                    )
+                    Text(text = "${adicional.nombre} - ${adicional.precio} ${prod.moneda}")
                 }
             }
 
@@ -51,7 +106,9 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                     navController.navigate("productos") // Redirige a otra pantalla o confirma la compra
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary)
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF438ea5),  // Cambiar color del botón "Buy"
+                    contentColor = Color.White)
             ) {
                 Text(text = "Confirmar selección")
             }
@@ -67,7 +124,8 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
 @Composable
 fun PersonalizacionButton(
     personalizacion: Personalizacion,
-    selectedOptions: MutableMap<Int, Opcion>
+    selectedOptions: MutableMap<Int, Opcion>,
+    onOptionSelected: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }  // Controla si el menú está expandido
     val selectedOption = selectedOptions[personalizacion.id]
@@ -76,7 +134,11 @@ fun PersonalizacionButton(
         // Botón de selección de personalización (por ejemplo, "Procesador")
         Button(
             onClick = { expanded = true },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFF438ea5),  // Cambiar color del botón "Buy"
+                contentColor = Color.White
+            )
         ) {
             Text(
                 text = "${personalizacion.nombre}: ${selectedOption?.nombre ?: "Seleccionar"}"
@@ -92,8 +154,10 @@ fun PersonalizacionButton(
                 DropdownMenuItem(onClick = {
                     selectedOptions[personalizacion.id] = opcion
                     expanded = false
+                    onOptionSelected()
                 }) {
-                    Text(text = opcion.nombre)
+//                    Text(text = opcion.nombre)
+                    Text(text = "${opcion.nombre} (+${String.format("%.2f", opcion.precioAdicional)} USD)")
                 }
             }
         }
