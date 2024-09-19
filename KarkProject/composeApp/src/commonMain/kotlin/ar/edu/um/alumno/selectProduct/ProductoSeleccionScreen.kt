@@ -32,10 +32,6 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
     ) {
         items(productos) { producto ->
             ProductoCard(producto = producto, navController = navController)
-//            Button(onClick = { navController.navigate("adicionales/${producto.id}") }) {
-//                Text("Buy ${producto.nombre}")
-//            }
-
             Spacer(modifier = Modifier.height(16.dp))  // Espacio entre cada producto
         }
     }

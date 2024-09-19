@@ -20,156 +20,243 @@ class ProductoViewModel : ViewModel() {
 
 val productosJson = """
 [
-  {
-    "id": 1,
-    "codigo": "NTB01",
-    "nombre": "Notebook 1",
-    "descripcion": "Notebook básica con pantalla de 14 pulgadas",
-    "precioBase": 1500.00,
-    "moneda": "USD",
-    "caracteristicas": [
-      {
+    {
         "id": 1,
-        "nombre": "Pantalla",
-        "descripcion": "Pantalla LCD 14\""
-      },
-      {
+        "codigo": "NTB01",
+        "nombre": "Lenovo IdeaPad 1 Laptop",
+        "descripcion": "Lenovo IdeaPad 1 Laptop, 15.6\" FHD Display, AMD Ryzen 5 5500U, 8GB RAM, 512GB SSD, Windows 11 Home, 720p Camera w/Privacy Shutter, Smart Noise Cancelling, Cloud Grey",
+        "precioBase": 450.00,
+        "moneda": "USD",
+        "caracteristicas": [
+            {
+                "id": 1,
+                "nombre": "Pantalla",
+                "descripcion": "15.6” FHD Display"
+            },
+            {
+                "id": 2,
+                "nombre": "Camara",
+                "descripcion": "720p Camera w/Privacy Shutter"
+            },
+            {
+                "id": 3,
+                "nombre": "Batería",
+                "descripcion": "Batería 43Wh"
+            }
+        ],
+        "personalizaciones": [
+            {
+                "id": 1,
+                "nombre": "CPU",
+                "descripcion": "Procesadores Disponibles",
+                "opciones": [
+                    {
+                        "id": 1,
+                        "codigo": "PROC01",
+                        "nombre": "Ryzen 5 5500U",
+                        "descripcion": "Procesador 1.8 GHz - 6(12) Cores",
+                        "precioAdicional": 0.00
+                    },
+                    {
+                        "id": 2,
+                        "codigo": "PROC02",
+                        "nombre": "Ryzen 5 5700U",
+                        "descripcion": "Procesador 2.1 GHz - 8(16) Cores",
+                        "precioAdicional": 120.00
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "nombre": "Memoria",
+                "descripcion": "Memorias Disponibles",
+                "opciones": [
+                    {
+                        "id": 5,
+                        "codigo": "MEM01",
+                        "nombre": "DDR4-8",
+                        "descripcion": "Memoria DDR4 - 8GB",
+                        "precioAdicional": 0.00
+                    },
+                    {
+                        "id": 6,
+                        "codigo": "MEM02",
+                        "nombre": "DDR4-16",
+                        "descripcion": "Memoria DDR4 - 16GB",
+                        "precioAdicional": 150.00
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "nombre": "Video",
+                "descripcion": "Video Disponible",
+                "opciones": [
+                    {
+                        "id": 10,
+                        "codigo": "VID01",
+                        "nombre": "Integrado",
+                        "descripcion": "GCN 5th generation GPU",
+                        "precioAdicional": 0.00
+                    }
+                ]
+            }
+        ],
+        "adicionales": [
+            {
+                "id": 1,
+                "nombre": "Mouse",
+                "descripcion": "Mouse Bluetooth 3 teclas",
+                "precio": 40.50,
+                "precioGratis": 2000.00
+            },
+            {
+                "id": 2,
+                "nombre": "Teclado",
+                "descripcion": "Teclado bluetooth",
+                "precio": 78.00,
+                "precioGratis": -1.00
+            },
+            {
+                "id": 3,
+                "nombre": "Funda",
+                "descripcion": "Funda de silicona",
+                "precio": 30.00,
+                "precioGratis": 2650.00
+            }
+        ]
+    },
+    {
         "id": 2,
-        "nombre": "Procesador",
-        "descripcion": "Intel i5 de 10ma generación"
-      }
-    ],
-    "personalizaciones": [
-      {
-        "id": 1,
-        "nombre": "CPU",
-        "descripcion": "Opciones de Procesador",
-        "opciones": [
-          {
-            "id": 1,
-            "codigo": "PROC01",
-            "nombre": "Intel i5",
-            "descripcion": "Procesador 1.6 GHz - 6 Cores",
-            "precioAdicional": 0.00
-          },
-          {
-            "id": 2,
-            "codigo": "PROC02",
-            "nombre": "Intel i7",
-            "descripcion": "Procesador 2.0 GHz - 8 Cores",
-            "precioAdicional": 200.00
-          }
+        "codigo": "NTB02",
+        "nombre": "MSI Stealth 18 AI Studio",
+        "descripcion": "MSI Stealth 18 AI Studio 18\" 240Hz QHD+ Gaming Laptop: Intel Ultra 9-185H, NVIDIA Geforce RTX 4080, 32GB DDR5, 1TB NVMe SSD",
+        "precioBase": 2899.00,
+        "moneda": "USD",
+        "caracteristicas": [
+            {
+                "id": 4,
+                "nombre": "Pantalla",
+                "descripcion": "18\" 240Hz QHD+\""
+            },
+            {
+                "id": 5,
+                "nombre": "Camara",
+                "descripcion": "WebCam 1080p"
+            },
+            {
+                "id": 6,
+                "nombre": "Batería",
+                "descripcion": "Batería 80Wh"
+            },
+            {
+                "id": 7,
+                "nombre": "Adicional",
+                "descripcion": "SD Card Reader"
+            }
+        ],
+        "personalizaciones": [
+            {
+                "id": 3,
+                "nombre": "CPU",
+                "descripcion": "Procesadores Disponibles",
+                "opciones": [
+                    {
+                        "id": 3,
+                        "codigo": "PROC03",
+                        "nombre": "Core 9 185H",
+                        "descripcion": "Procesador 2.3 GHz - 8 Cores",
+                        "precioAdicional": 0.00
+                    },
+                    {
+                        "id": 4,
+                        "codigo": "PROC04",
+                        "nombre": "Core 9 195H",
+                        "descripcion": "Procesador 2.7 GHz - 12 Cores",
+                        "precioAdicional": 300.00
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "nombre": "Memoria",
+                "descripcion": "Memorias Disponibles",
+                "opciones": [
+                    {
+                        "id": 7,
+                        "codigo": "MEM03",
+                        "nombre": "DDR6-16",
+                        "descripcion": "Memoria DDR5 - 16GB",
+                        "precioAdicional": 0.00
+                    },
+                    {
+                        "id": 8,
+                        "codigo": "MEM04",
+                        "nombre": "DDR4-32",
+                        "descripcion": "Memoria DDR5 - 32GB",
+                        "precioAdicional": 120.00
+                    },
+                    {
+                        "id": 9,
+                        "codigo": "MEM05",
+                        "nombre": "DDR4-64",
+                        "descripcion": "Memoria DDR5 - 64GB",
+                        "precioAdicional": 400.00
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "nombre": "Video",
+                "descripcion": "Video Disponible",
+                "opciones": [
+                    {
+                        "id": 12,
+                        "codigo": "VID01",
+                        "nombre": "RTX 4080",
+                        "descripcion": "NVIDIA GeForce RTX 4080 - 12GB",
+                        "precioAdicional": 0.00
+                    },
+                    {
+                        "id": 13,
+                        "codigo": "VID02",
+                        "nombre": "RTX 4090",
+                        "descripcion": "NVIDIA GeForce RTX 4080 - 16GB",
+                        "precioAdicional": 600.00
+                    }
+                ]
+            }
+        ],
+        "adicionales": [
+            {
+                "id": 1,
+                "nombre": "Mouse",
+                "descripcion": "Mouse Bluetooth 3 teclas",
+                "precio": 40.50,
+                "precioGratis": 2000.00
+            },
+            {
+                "id": 2,
+                "nombre": "Teclado",
+                "descripcion": "Teclado bluetooth",
+                "precio": 78.00,
+                "precioGratis": -1.00
+            },
+            {
+                "id": 3,
+                "nombre": "Funda",
+                "descripcion": "Funda de silicona",
+                "precio": 30.00,
+                "precioGratis": 2650.00
+            },
+            {
+                "id": 4,
+                "nombre": "Cargador",
+                "descripcion": "Cargador rápido",
+                "precio": 189.00,
+                "precioGratis": 2400.00
+            }
         ]
-      },
-      {
-        "id": 2,
-        "nombre": "Memoria RAM",
-        "descripcion": "Opciones de Memoria",
-        "opciones": [
-          {
-            "id": 1,
-            "codigo": "RAM01",
-            "nombre": "8GB DDR4",
-            "descripcion": "8GB RAM DDR4",
-            "precioAdicional": 0.00
-          },
-          {
-            "id": 2,
-            "codigo": "RAM02",
-            "nombre": "16GB DDR4",
-            "descripcion": "16GB RAM DDR4",
-            "precioAdicional": 100.00
-          }
-        ]
-      }
-    ],
-    "adicionales": [
-      {
-        "id": 1,
-        "nombre": "Mouse",
-        "descripcion": "Mouse Bluetooth 3 botones",
-        "precio": 30.50,
-        "precioGratis": 1500.00
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "codigo": "NTB02",
-    "nombre": "Notebook 2",
-    "descripcion": "Notebook avanzada con pantalla OLED 16 pulgadas",
-    "precioBase": 2250.00,
-    "moneda": "USD",
-    "caracteristicas": [
-      {
-        "id": 3,
-        "nombre": "Pantalla",
-        "descripcion": "Pantalla OLED 16\""
-      },
-      {
-        "id": 4,
-        "nombre": "Cámara",
-        "descripcion": "Cámara web 1080p"
-      },
-      {
-        "id": 5,
-        "nombre": "Batería",
-        "descripcion": "Batería de 80Wh"
-      }
-    ],
-    "personalizaciones": [
-      {
-        "id": 3,
-        "nombre": "CPU",
-        "descripcion": "Opciones de Procesador",
-        "opciones": [
-          {
-            "id": 3,
-            "codigo": "PROC03",
-            "nombre": "Intel Core Y1",
-            "descripcion": "Procesador 1.2 GHz - 10 Cores",
-            "precioAdicional": 0.00
-          },
-          {
-            "id": 4,
-            "codigo": "PROC04",
-            "nombre": "Intel Core Y2",
-            "descripcion": "Procesador 1.7 GHz - 24 Cores",
-            "precioAdicional": 700.00
-          }
-        ]
-      },
-      {
-        "id": 4,
-        "nombre": "Memoria RAM",
-        "descripcion": "Opciones de Memoria",
-        "opciones": [
-          {
-            "id": 5,
-            "codigo": "RAM03",
-            "nombre": "16GB DDR4",
-            "descripcion": "16GB RAM DDR4",
-            "precioAdicional": 0.00
-          },
-          {
-            "id": 6,
-            "codigo": "RAM04",
-            "nombre": "32GB DDR4",
-            "descripcion": "32GB RAM DDR4",
-            "precioAdicional": 400.00
-          }
-        ]
-      }
-    ],
-    "adicionales": [
-      {
-        "id": 2,
-        "nombre": "Funda",
-        "descripcion": "Funda protectora de neopreno",
-        "precio": 50.00,
-        "precioGratis": 2000.00
-      }
-    ]
-  }
+    }
 ]
 """
