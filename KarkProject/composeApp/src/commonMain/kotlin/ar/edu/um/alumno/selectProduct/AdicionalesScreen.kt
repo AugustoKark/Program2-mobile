@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ar.edu.um.alumno.selectProduct.format
 
 
 @Composable
@@ -46,7 +47,7 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
         ) {
             // Título
             Text(
-                text = "Precio Total: ${producto.moneda} ${String.format("%.2f", totalPrice)}",
+                text = "Precio Total: ${producto.moneda} ${totalPrice.format(2)}",
                 style = MaterialTheme.typography.h4.copy(
                     color = Color(0xFF438ea5),
                     fontSize = 22.sp,
@@ -94,7 +95,7 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
                     )
                     // Mostrar el texto con el precio o "Gratis" según la condición
                     Text(
-                        text = "${adicional.nombre} - ${String.format("%.2f", adicional.precio)} ${prod.moneda}" +
+                        text = "${adicional.nombre} - ${ adicional.precio.format(2)} ${prod.moneda}" +
                                 if (esGratis) " (Gratis)" else ""
                     )
                 }
@@ -160,7 +161,7 @@ fun PersonalizacionButton(
                     expanded = false
                     onOptionSelected()
                 }) {
-                    Text(text = "${opcion.nombre} (+${String.format("%.2f", opcion.precioAdicional)} USD)")
+                    Text(text = "${opcion.nombre} (+${opcion.precioAdicional.format(2)} USD)")
                 }
             }
         }
