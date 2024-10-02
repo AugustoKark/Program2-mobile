@@ -16,15 +16,20 @@ import androidx.navigation.compose.*
 import karkproject.composeapp.generated.resources.Res
 import karkproject.composeapp.generated.resources.laptop
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import karkproject.composeapp.generated.resources.header
 import org.jetbrains.compose.resources.painterResource
 
+
+
 @Composable
 fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoViewModel = viewModel()) {
     val productos by viewModel.productos.collectAsState()
 
+
+    Box(modifier = Modifier.fillMaxSize()) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -35,6 +40,21 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
             Spacer(modifier = Modifier.height(16.dp))  // Espacio entre cada producto
         }
     }
+    Button(
+        onClick = { navController.navigate("misCompras") },
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(16.dp),
+        colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFF438ea5),  // Color de fondo del botón
+            contentColor = Color.White
+        )
+
+    ) {
+        Text("Mis Compras")
+    }
+
+}
 }
 
 @Composable
