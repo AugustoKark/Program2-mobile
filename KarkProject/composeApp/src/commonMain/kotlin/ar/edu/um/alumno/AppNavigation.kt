@@ -39,7 +39,7 @@ fun AppNavigation() {
             AdicionalesScreen(productoId = productoId, viewModel = viewModel(), navController = navController)
         }
         composable("misCompras") {
-            MisComprasScreen()
+            MisComprasScreen(navController = navController)
         }
 
     }
