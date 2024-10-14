@@ -53,6 +53,19 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
     ) {
         Text("Mis Compras")
     }
+        Button(
+            onClick = { navController.navigate("misComprasAdmin") },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFF438ea5),  // Color de fondo del botón
+                contentColor = Color.White
+            )
+
+        ) {
+            Text("Mis ComprasAdmin")
+        }
 
 }
 }

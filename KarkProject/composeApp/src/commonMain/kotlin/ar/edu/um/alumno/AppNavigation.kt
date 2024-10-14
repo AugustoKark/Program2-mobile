@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ar.edu.um.alumno.compras.MisComprasScreen
+import ar.edu.um.alumno.comprasAdmin.MisComprasScreenAdmin
 import ar.edu.um.alumno.createaccount.RegisterScreen
 import ar.edu.um.alumno.createaccount.RegisterViewModel
 import ar.edu.um.alumno.login.LoginScreen
@@ -40,6 +41,10 @@ fun AppNavigation() {
         }
         composable("misCompras") {
             MisComprasScreen(navController = navController)
+
+        }
+        composable("misComprasAdmin") {
+            MisComprasScreenAdmin(navController = navController)
         }
 
     }
