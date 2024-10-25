@@ -2,26 +2,12 @@ package ar.edu.um.alumno.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
@@ -31,12 +17,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import karkproject.composeapp.generated.resources.Res
-import karkproject.composeapp.generated.resources.header
-import karkproject.composeapp.generated.resources.laptop
-
-
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
+import karkproject.composeapp.generated.resources.header
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
@@ -51,7 +34,7 @@ fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
 
 @Composable
 fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavController) {
-    val email: String by viewModel.email.collectAsState()
+    val username: String by viewModel.username.collectAsState()
     val password: String by viewModel.password.collectAsState()
     val loginEnable: Boolean by viewModel.loginEnable.collectAsState(initial = false)
     val coroutineScope = rememberCoroutineScope()
@@ -64,15 +47,15 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavContr
         item {
             HeaderImage(Modifier)
             Spacer(modifier = Modifier.padding(16.dp))
-            EmailField(email, { viewModel.onLoginChanged(it, password) })
+            UsernameField(username, { viewModel.onLoginChanged(it, password) })
             Spacer(modifier = Modifier.padding(4.dp))
-            PasswordField(password, { viewModel.onLoginChanged(email, it) })
+            PasswordField(password, { viewModel.onLoginChanged(username, it) })
             Spacer(modifier = Modifier.padding(4.dp))
             Box(modifier = Modifier.fillMaxWidth()) {
                 ForgotPassword(Modifier.align(Alignment.CenterEnd))
             }
             Spacer(modifier = Modifier.padding(4.dp))
-            LoginButton(loginEnable, navController)
+            LoginButton(loginEnable, navController, viewModel)
 
             Spacer(modifier = Modifier.padding(6.dp))
             TextOr()
@@ -83,10 +66,18 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavContr
 }
 
 @Composable
-fun LoginButton(loginEnable: Boolean, navController: NavController) {
-    Button(
+fun LoginButton(loginEnable: Boolean, navController: NavController, viewModel: LoginViewModel) {
+    val coroutineScope = rememberCoroutineScope()
 
-        onClick = { navController.navigate("productos") },
+    Button(
+        onClick = {
+            coroutineScope.launch {
+                val success = viewModel.onLoginSelected()
+                if (success) {
+                    navController.navigate("productos")
+                }
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -100,7 +91,6 @@ fun LoginButton(loginEnable: Boolean, navController: NavController) {
         Text(text = "Login", color = Color.White)
     }
 }
-
 
 @Composable
 fun TextOr() {
@@ -128,9 +118,8 @@ fun TextOr() {
 }
 
 @Composable
-fun CreateAccountButton(modifier: Modifier,navController: NavController) {
+fun CreateAccountButton(modifier: Modifier, navController: NavController) {
     Button(
-
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -145,25 +134,6 @@ fun CreateAccountButton(modifier: Modifier,navController: NavController) {
     }
 }
 
-//@Composable
-//fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
-//    Button(
-//        onClick = { onLoginSelected() },
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(48.dp),
-//        colors = ButtonDefaults.buttonColors(
-//            backgroundColor = Color(0xFF438ea5),
-//            disabledBackgroundColor = Color(0xFFB0B0B0),
-//            contentColor = Color.White,
-//            disabledContentColor = Color.White,
-//        ), enabled = loginEnable,
-//        shape = RoundedCornerShape(16.dp)
-//    ) {
-//        Text(text = "Login", color = Color.White)
-//    }
-//}
-
 @Composable
 fun ForgotPassword(modifier: Modifier) {
     Text(
@@ -171,7 +141,6 @@ fun ForgotPassword(modifier: Modifier) {
         modifier = modifier.clickable { },
         fontSize = 12.sp,
         color = Color(0xFF87CEEB)
-
     )
 }
 
@@ -194,12 +163,12 @@ fun PasswordField(password: String, onTextFieldChange: (String) -> Unit) {
 }
 
 @Composable
-fun EmailField(email: String, onTextFieldChange: (String) -> Unit) {
+fun UsernameField(username: String, onTextFieldChange: (String) -> Unit) {
     TextField(
-        value = email, onValueChange = { onTextFieldChange(it) },
+        value = username, onValueChange = { onTextFieldChange(it) },
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text(text = "Email") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        placeholder = { Text(text = "Username") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         singleLine = true,
         maxLines = 1,
         colors = TextFieldDefaults.textFieldColors(

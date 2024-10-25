@@ -1,28 +1,13 @@
 package ar.edu.um.alumno.createaccount
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
@@ -36,10 +21,6 @@ import karkproject.composeapp.generated.resources.Res
 import karkproject.composeapp.generated.resources.header
 import kotlinx.coroutines.launch
 
-
-
-
-
 @Composable
 fun RegisterScreen(viewModel: RegisterViewModel, navController: NavController) {
     Box(
@@ -52,7 +33,6 @@ fun RegisterScreen(viewModel: RegisterViewModel, navController: NavController) {
                 .width(300.dp)
                 .padding(3.dp)
         ) {
-
             Register(
                 modifier = Modifier.padding(2.dp),
                 viewModel = viewModel,
@@ -61,15 +41,16 @@ fun RegisterScreen(viewModel: RegisterViewModel, navController: NavController) {
         }
     }
 }
+
 @Composable
 fun Register(modifier: Modifier, viewModel: RegisterViewModel, navController: NavController) {
-    val login: String by viewModel.login.collectAsState(initial = "")
+    val username: String by viewModel.username.collectAsState(initial = "")
     val email: String by viewModel.email.collectAsState(initial = "")
     val password: String by viewModel.password.collectAsState(initial = "")
-    val nombres: String by viewModel.nombres.collectAsState(initial = "")
-    val descripcion: String by viewModel.descripcion.collectAsState(initial = "")
+    val passwordConfirm: String by viewModel.passwordConfirm.collectAsState(initial = "")
     val registerEnable: Boolean by viewModel.registerEnable.collectAsState(initial = false)
     val isLoading: Boolean by viewModel.isLoading.collectAsState(initial = false)
+    val errorMessage: String by viewModel.errorMessage.collectAsState(initial = "")
     val coroutineScope = rememberCoroutineScope()
 
     if (isLoading) {
@@ -86,15 +67,22 @@ fun Register(modifier: Modifier, viewModel: RegisterViewModel, navController: Na
             item {
                 HeaderImage(Modifier)
                 Spacer(modifier = Modifier.height(16.dp))
-                LoginField(login) { viewModel.onRegisterChanged(it, email, password, nombres, descripcion) }
+                UsernameField(username) { viewModel.onRegisterChanged(it, email, password, passwordConfirm) }
                 Spacer(modifier = Modifier.height(4.dp))
-                EmailField(email) { viewModel.onRegisterChanged(login, it, password, nombres, descripcion) }
+                EmailField(email) { viewModel.onRegisterChanged(username, it, password, passwordConfirm) }
                 Spacer(modifier = Modifier.height(4.dp))
-                PasswordField(password) { viewModel.onRegisterChanged(login, email, it, nombres, descripcion) }
+                PasswordField(password) { viewModel.onRegisterChanged(username, email, it, passwordConfirm) }
                 Spacer(modifier = Modifier.height(4.dp))
-                NombresField(nombres) { viewModel.onRegisterChanged(login, email, password, it, descripcion) }
+                PasswordConfirmField(passwordConfirm) { viewModel.onRegisterChanged(username, email, password, it) }
                 Spacer(modifier = Modifier.height(4.dp))
-                DescripcionField(descripcion) { viewModel.onRegisterChanged(login, email, password, nombres, it) }
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Box(modifier = Modifier.fillMaxWidth()) {
                     LogInButton(Modifier.align(Alignment.CenterEnd), navController)
@@ -102,7 +90,11 @@ fun Register(modifier: Modifier, viewModel: RegisterViewModel, navController: Na
                 Spacer(modifier = Modifier.height(8.dp))
                 RegisterButton(registerEnable) {
                     coroutineScope.launch {
-                        viewModel.onRegisterSelected()
+                        val success = viewModel.onRegisterSelected()
+                        if (success) {
+                            navController.navigate("login")
+                        }
+
                     }
                 }
             }
@@ -129,10 +121,10 @@ fun RegisterButton(registerEnable: Boolean, onRegisterSelected: () -> Unit) {
 }
 
 @Composable
-fun LoginField(login: String, onTextFieldChanged: (String) -> Unit) {
+fun UsernameField(username: String, onTextFieldChanged: (String) -> Unit) {
     TextField(
-        value = login, onValueChange = { onTextFieldChanged(it) },
-        placeholder = { Text(text = "Login") },
+        value = username, onValueChange = { onTextFieldChanged(it) },
+        placeholder = { Text(text = "Username") },
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         singleLine = true,
@@ -183,30 +175,12 @@ fun PasswordField(password: String, onTextFieldChanged: (String) -> Unit) {
 }
 
 @Composable
-fun NombresField(nombres: String, onTextFieldChanged: (String) -> Unit) {
+fun PasswordConfirmField(passwordConfirm: String, onTextFieldChanged: (String) -> Unit) {
     TextField(
-        value = nombres, onValueChange = { onTextFieldChanged(it) },
-        placeholder = { Text(text = "Nombres") },
+        value = passwordConfirm, onValueChange = { onTextFieldChanged(it) },
+        placeholder = { Text(text = "Confirm Password") },
         modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        singleLine = true,
-        maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color(0xFF636262),
-            backgroundColor = Color(0xFFDEDDDD),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
-    )
-}
-
-@Composable
-fun DescripcionField(descripcion: String, onTextFieldChanged: (String) -> Unit) {
-    TextField(
-        value = descripcion, onValueChange = { onTextFieldChanged(it) },
-        placeholder = { Text(text = "Descripcion") },
-        modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         maxLines = 1,
         colors = TextFieldDefaults.textFieldColors(
@@ -242,7 +216,6 @@ fun HeaderImage(modifier: Modifier) {
         )
     }
 }
-
 
 @Composable
 fun LogInButton(modifier: Modifier, navController: NavController) {

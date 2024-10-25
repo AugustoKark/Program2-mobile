@@ -28,6 +28,9 @@ import org.jetbrains.compose.resources.painterResource
 fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoViewModel = viewModel()) {
     val productos by viewModel.productos.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadProductos(token)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
     LazyColumn(
