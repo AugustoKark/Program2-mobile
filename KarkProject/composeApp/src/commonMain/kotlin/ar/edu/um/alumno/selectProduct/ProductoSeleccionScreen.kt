@@ -19,6 +19,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
+import com.russhwolf.settings.set
+
 import karkproject.composeapp.generated.resources.header
 import org.jetbrains.compose.resources.painterResource
 
@@ -28,8 +32,12 @@ import org.jetbrains.compose.resources.painterResource
 fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoViewModel = viewModel()) {
     val productos by viewModel.productos.collectAsState()
 
+
+
+
+
     LaunchedEffect(Unit) {
-        viewModel.loadProductos(token)
+        viewModel.loadProductos()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

@@ -1,4 +1,5 @@
 import androidx.lifecycle.ViewModel
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.CoroutineScope
@@ -19,19 +20,30 @@ import io.ktor.client.call.*
 
 class ProductoViewModel : ViewModel() {
 
+    val settings : Settings = Settings()
+
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
     val productos: StateFlow<List<Producto>> = _productos
 
     private val client = HttpClient {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                ignoreUnknownKeys = true
+            })
         }
     }
 
+
     private val viewModelScope = CoroutineScope(Job() + Dispatchers.Main)
 
-    fun loadProductos(token: String) {
-        fetchDispositivos(token)
+    fun loadProductos() {
+        val token = settings.getString("jwtToken" , "")
+        if (token != null){
+            println("Token: $token")
+            fetchDispositivos(token)
+    }else{
+            println("No hay token")
+    }
     }
 
     private fun fetchDispositivos(token: String) {
@@ -45,10 +57,14 @@ class ProductoViewModel : ViewModel() {
                 if (response.status == HttpStatusCode.OK) {
                     val dispositivos: List<Producto> = response.body()
                     _productos.value = dispositivos
+                    println(dispositivos)
                 } else {
+                    println("hubo un error")
                     // Handle error response
                 }
             } catch (e: Exception) {
+                println("hubo un error")
+                println(e)
                 // Handle exception
             }
         }

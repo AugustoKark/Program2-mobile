@@ -1,6 +1,9 @@
 package ar.edu.um.alumno.login
 
 import androidx.lifecycle.ViewModel
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.set
+import com.russhwolf.settings.get
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.delay
@@ -14,6 +17,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import io.ktor.serialization.kotlinx.json.*
 
+
+private val settings: Settings = Settings()
+
 @Serializable
 data class AuthRequest(val username: String, val password: String)
 
@@ -26,6 +32,7 @@ data class AuthResponse(
 )
 
 class LoginViewModel : ViewModel() {
+
 
     private val client = HttpClient {
         install(ContentNegotiation) {
@@ -56,7 +63,12 @@ class LoginViewModel : ViewModel() {
     private val _roles = MutableStateFlow<List<String>>(emptyList())
     val roles: StateFlow<List<String>> = _roles
 
-
+//    init {
+//
+//        _jwtToken.value = settings.getString("jwtToken", null.toString())
+//        _userId.value = settings.getInt("userId", -1).takeIf { it != -1 }
+//        _roles.value = settings.getString("roles", "").split(",").filter { it.isNotEmpty() }
+//    }
     fun onLoginChanged(username: String, password: String) {
         _username.value = username
         _password.value = password
@@ -84,10 +96,18 @@ class LoginViewModel : ViewModel() {
         return if (response.status == HttpStatusCode.OK) {
             val authResponse: AuthResponse = response.body()
             _jwtToken.value = authResponse.id_token
+            settings.putString("jwtToken", authResponse.id_token)
             _userId.value = authResponse.userId
+            settings.putInt("userId", authResponse.userId)
             _roles.value = authResponse.roles
+            settings.putString("roles", authResponse.roles.joinToString(","))
+            println(jwtToken.value)
+            println(userId.value)
+            println(roles.value)
+
             authResponse
         } else {
+            println("Error: ${response.status}")
             null
         }
     }

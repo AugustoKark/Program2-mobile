@@ -23,6 +23,7 @@ ktorClientCore = "2.3.3"
 kotlinx-serialization = "1.6.3"
 kotlinxDatetime = "0.6.1"
 ktor = "2.3.11"
+settings-multiplatform = "1.1.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -52,7 +53,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 kotlin-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
-
+settings = {module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "settings-multiplatform"}
 
 
 [plugins]

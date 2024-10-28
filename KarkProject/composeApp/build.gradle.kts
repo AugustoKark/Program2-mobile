@@ -63,7 +63,7 @@ kotlin {
             implementation("io.ktor:ktor-client-content-negotiation:2.3.11")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
             implementation("com.russhwolf:multiplatform-settings:0.8.1")
-
+            implementation(libs.settings)
         }
 
         desktopMain.dependencies {
