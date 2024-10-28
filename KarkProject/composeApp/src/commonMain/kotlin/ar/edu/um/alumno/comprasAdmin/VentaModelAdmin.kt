@@ -24,9 +24,9 @@ data class VentaDetalladaAdmin(
     val descripcion: String,
     val precioBase: Double,
     val moneda: String,
-    val caracteristicas: List<CaracteristicaAdmin>,
-    val personalizaciones: List<PersonalizacionAdmin>,
-    val adicionales: List<AdicionalAdmin>
+    val caracteristicas: List<CaracteristicaAdmin>? = emptyList(),
+    val personalizaciones: List<PersonalizacionAdmin>? = emptyList(),
+    val adicionales: List<AdicionalAdmin>? = emptyList()
 )
 
 @Serializable
@@ -38,16 +38,15 @@ data class CaracteristicaAdmin(
 
 @Serializable
 data class PersonalizacionAdmin(
-    val id: Int,
-    val nombre: String,
-    val descripcion: String,
-    @Serializable(with = OpcionListSerializer::class)
-    val opciones: List<OpcionAdmin>
+    val id: Int?,
+    val nombre: String?,
+    val descripcion: String?,
+    val opcion: OpcionAdmin?
 )
 
 @Serializable
 data class OpcionAdmin(
-    val id: Int,
+    val id: Int?,
     val codigo: String?,
     val nombre: String,
     val descripcion: String,

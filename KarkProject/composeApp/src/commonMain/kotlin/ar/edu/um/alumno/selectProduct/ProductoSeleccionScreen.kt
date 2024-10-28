@@ -53,7 +53,8 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
             Spacer(modifier = Modifier.height(16.dp))  // Espacio entre cada producto
         }
     }
-        if (roles.contains("ROLE_USER")) {
+        if (!roles.contains("ROLE_ADMIN")) {
+
     Button(
         onClick = { navController.navigate("misCompras") },
         modifier = Modifier

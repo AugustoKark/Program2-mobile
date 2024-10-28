@@ -1,7 +1,31 @@
 package ar.edu.um.alumno.comprasAdmin
+import  io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.launch
+import androidx.lifecycle.viewModelScope
+import io.ktor.client.*
+import kotlinx.coroutines.flow.StateFlow
 
 import ar.edu.um.alumno.compras.VentaDetallada
 import ar.edu.um.alumno.compras.VentaSimple
+import androidx.lifecycle.ViewModel
+import com.russhwolf.settings.Settings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.Job
+import io.ktor.client.*
+import io.ktor.client.call.*
 
 
 
@@ -15,9 +39,10 @@ import kotlinx.serialization.json.Json
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun ExpandableCardAdmin(venta: VentaSimpleAdmin) {
+fun ExpandableCardAdmin(venta: VentaSimpleAdmin, token: String, viewModel: MisComprasViewModelAdmin) {
     var expanded by remember { mutableStateOf(false) }
     var ventaUnitaria by remember { mutableStateOf<VentaDetalladaAdmin?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -25,9 +50,12 @@ fun ExpandableCardAdmin(venta: VentaSimpleAdmin) {
             .padding(vertical = 4.dp)
             .clickable {
                 expanded = !expanded
-                if (expanded) {
-                    // Simula la carga de datos desde el JSON
-                    ventaUnitaria = decodeVentaUnitaria(ar.edu.um.alumno.comprasAdmin.ventaUnitariaJson)
+                if (expanded && ventaUnitaria == null) {
+                    isLoading = true
+                    viewModel.fetchVentaDetallada(venta.idVenta, token) { result ->
+                        ventaUnitaria = result
+                        isLoading = false
+                    }
                 }
             },
         elevation = 4.dp
@@ -40,53 +68,51 @@ fun ExpandableCardAdmin(venta: VentaSimpleAdmin) {
             Text(text = "Precio: ${venta.precio}")
 
             if (expanded) {
-                ventaUnitaria?.let { venta ->
-                    Text(text = "Detalles de la venta unitaria:")
-                    Row {
-                        Text(text = "Nombre: ", fontWeight = FontWeight.Bold)
-                        Text(text = venta.nombre)
-                    }
-                    Row {
-                        Text(text = "Descripción: ", fontWeight = FontWeight.Bold)
-                        Text(text = venta.descripcion)
-                    }
-                    Row {
-                        Text(text = "Precio: ", fontWeight = FontWeight.Bold)
-                        Text(text = "${venta.precioBase} ${venta.moneda}")
-                    }
+                if (isLoading) {
+                    Text(text = "Cargando detalles...")
+                } else {
+                    ventaUnitaria?.let { venta ->
+                        Text(text = "Detalles de la venta unitaria:")
+                        Row {
+                            Text(text = "Nombre: ", fontWeight = FontWeight.Bold)
+                            Text(text = venta.nombre)
+                        }
+                        Row {
+                            Text(text = "Descripción: ", fontWeight = FontWeight.Bold)
+                            Text(text = venta.descripcion)
+                        }
+                        Row {
+                            Text(text = "Precio: ", fontWeight = FontWeight.Bold)
+                            Text(text = "${venta.precioBase} ${venta.moneda}")
+                        }
 
-                    Text(text = "Características:", fontWeight = FontWeight.Bold)
-                    venta.caracteristicas.forEach { caracteristica ->
-                        Text(text = "${caracteristica.nombre}: ${caracteristica.descripcion}")
-                    }
+                        Text(text = "Características:", fontWeight = FontWeight.Bold)
+                        venta.caracteristicas?.forEach { caracteristica ->
+                            Text(text = "${caracteristica.nombre}: ${caracteristica.descripcion}")
+                        }
 
-                    Text(text = "Personalizaciones:", fontWeight = FontWeight.Bold)
-                    venta.personalizaciones.forEach { personalizacion ->
-                        Column {
-                            Text(text = "${personalizacion.nombre}: ", fontWeight = FontWeight.Bold)
-                            personalizacion.opciones.forEach { opcion ->
-                                Text(text = "${opcion.nombre} - ${opcion.descripcion}")
+                        Text(text = "Personalizaciones:", fontWeight = FontWeight.Bold)
+                        venta.personalizaciones?.forEach { personalizacion ->
+                            Column {
+                                Text(text = "${personalizacion.nombre}: ", fontWeight = FontWeight.Bold)
+                                personalizacion.opcion?.let { opcion ->
+                                    Text(text = "${opcion.nombre} - ${opcion.descripcion}")
+                                }
                             }
                         }
-                    }
 
-                    Text(text = "Adicionales:", fontWeight = FontWeight.Bold)
-                    venta.adicionales.forEach { adicional ->
-                        Row {
-                            Text(text = "${adicional.nombre}: ", fontWeight = FontWeight.Bold)
-                            Text(text = "${adicional.descripcion} (${adicional.precio} ${venta.moneda})")
+                        Text(text = "Adicionales:", fontWeight = FontWeight.Bold)
+                        venta.adicionales?.forEach { adicional ->
+                            Row {
+                                Text(text = "${adicional.nombre}: ", fontWeight = FontWeight.Bold)
+                                Text(text = "${adicional.descripcion} (${adicional.precio} ${venta.moneda})")
+                            }
                         }
+                    } ?: run {
+                        Text(text = "No se encontraron detalles.")
                     }
                 }
             }
         }
     }
 }
-
-
-
-fun decodeVentaUnitaria(json: String): VentaDetalladaAdmin {
-    val jsonDecoder = Json { ignoreUnknownKeys = true }
-    return jsonDecoder.decodeFromString(json)
-}
-

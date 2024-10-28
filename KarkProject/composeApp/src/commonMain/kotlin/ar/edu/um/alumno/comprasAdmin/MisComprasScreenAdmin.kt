@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
@@ -24,6 +25,7 @@ import androidx.navigation.NavController
 @Composable
 fun MisComprasScreenAdmin(navController: NavController, viewModel: MisComprasViewModelAdmin = viewModel()) {
     val ventas by viewModel.ventas.collectAsState()
+    val token = viewModel.settings.getString("jwtToken", "")
 
     Column(
         modifier = Modifier
@@ -35,7 +37,7 @@ fun MisComprasScreenAdmin(navController: NavController, viewModel: MisComprasVie
         Text("Mis Compras Admin", style = MaterialTheme.typography.h4, color = Color(0xFF438ea5), fontWeight = FontWeight.Bold)
         LazyColumn {
             items(ventas) { venta ->
-                ExpandableCardAdmin(venta)
+                ExpandableCardAdmin(venta, token, viewModel)
             }
         }
     }
