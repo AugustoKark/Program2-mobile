@@ -11,123 +11,102 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.*
+import com.russhwolf.settings.Settings
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.Job
+import io.ktor.client.*
+import io.ktor.client.call.*
+import androidx.lifecycle.viewModelScope
 
+
+
+
+
+import kotlinx.coroutines.launch
+
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 
 class MisComprasViewModel : ViewModel() {
 
-private val _ventas = MutableStateFlow<List<VentaSimple>>(emptyList())
-val ventas: StateFlow<List<VentaSimple>> = _ventas
+    private val _ventas = MutableStateFlow<List<VentaSimple>>(emptyList())
+    val ventas: StateFlow<List<VentaSimple>> = _ventas
 
-init {
-    loadProductos()
-}
+    val settings: Settings = Settings()
 
-private fun loadProductos() {
-    _ventas.value = Json.decodeFromString(ventasJson)
-}
-}
-
-
-
-val ventasJson = """
-
-[
-    { 
-        "id": 1508,
-        "fechaVenta": "2024-10-10T20:15:00Z",
-        "precioFinal": 450.00
-    },
-    {
-        "id": 1509,
-        "fechaVenta": "2024-10-10T20:15:00Z",
-        "precioFinal": 450.00
-    },
-    {
-        "id": 1510,
-        "fechaVenta": "2024-10-10T20:15:00Z",
-        "precioFinal": 450.00
+    private val client = HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+            })
+        }
     }
 
-]
-"""
+    init {
+        loadVentasUsuario()
+    }
 
-val ventaUnitariaJson= """
-{
-    "idVenta": 1508,
-    "idDispositivo": 1,
-    "codigo": "NTB01",
-    "nombre": "Lenovo IdeaPad 1 Laptop",
-    "descripcion": "Lenovo IdeaPad 1 Laptop, 15.6\" FHD Display, AMD Ryzen 5 5500U, 8GB RAM, 512GB SSD, Windows 11 Home, 720p Camera w/Privacy Shutter, Smart Noise Cancelling, Cloud Grey",
-    "precioBase": 718.5,
-    "moneda": "USD",
-    "caracteristicas": [
-        {
-            "id": 1,
-            "nombre": "Pantalla",
-            "descripcion": "15.6” FHD Display"
-        },
-        {
-            "id": 2,
-            "nombre": "Camara",
-            "descripcion": "720p Camera w/Privacy Shutter"
-        },
-        {
-            "id": 3,
-            "nombre": "Batería",
-            "descripcion": "Batería 43Wh"
+    private fun loadVentasUsuario() {
+        val token = settings.getString("jwtToken", "")
+        val userId = settings.getInt("userId", -1)
+        if (token.isNotEmpty() && userId != -1) {
+            fetchVentasUsuario(userId, token)
+        } else {
+            println("No hay token o ID de usuario")
         }
-    ],
-    "personalizaciones": [
-        {
-            "id": 1,
-            "nombre": "CPU",
-            "descripcion": "Procesadores Disponibles",
-            "opciones": {
-                "id": 1,
-                "codigo": null,
-                "nombre": "Ryzen 5 5500U",
-                "descripcion": "Procesador 1.8 GHz - 6(12) Cores",
-                "precioAdicional": null
-            }
-        },
-        {
-            "id": 2,
-            "nombre": "Memoria",
-            "descripcion": "Memorias Disponibles",
-            "opciones": {
-                "id": 2,
-                "codigo": null,
-                "nombre": "Ryzen 5 5700U",
-                "descripcion": "Procesador 2.1 GHz - 8(16) Cores",
-                "precioAdicional": null
-            }
-        },
-        {
-            "id": 5,
-            "nombre": "Video",
-            "descripcion": "Video Disponible",
-            "opciones": {
-                "id": 5,
-                "codigo": null,
-                "nombre": "DDR4-8",
-                "descripcion": "Memoria DDR4 - 8GB",
-                "precioAdicional": null
+    }
+
+    private fun fetchVentasUsuario(userId: Int, token: String) {
+        viewModelScope.launch {
+            try {
+                val response: HttpResponse = client.get("http://192.168.100.71:8080/api/ventas/usuario/$userId") {
+                    headers {
+                        append(HttpHeaders.Authorization, "Bearer $token")
+                    }
+                }
+                if (response.status == HttpStatusCode.OK) {
+                    val ventas: List<VentaSimple> = response.body()
+                    _ventas.value = ventas
+                    println(ventas)
+                } else {
+                    println("Hubo un error: ${response.status}")
+                }
+            } catch (e: Exception) {
+                println("Hubo un error")
+                println(e)
             }
         }
-    ],
-    "adicionales": [
-        {
-            "id": 1,
-            "nombre": "Mouse",
-            "descripcion": "Mouse Bluetooth 3 teclas",
-            "precio": 40.5
-        },
-        {
-            "id": 2,
-            "nombre": "Teclado",
-            "descripcion": "Teclado bluetooth",
-            "precio": 78
+    }
+
+    fun fetchVentaDetallada(idVenta: Int, token: String, onResult: (VentaDetallada?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response: HttpResponse = client.get("http://192.168.100.71:8080/api/ventas/profesor/$idVenta") {
+                    headers {
+                        append(HttpHeaders.Authorization, "Bearer $token")
+                    }
+                }
+                if (response.status == HttpStatusCode.OK) {
+                    val ventaDetallada: VentaDetallada = response.body()
+                    onResult(ventaDetallada)
+                } else {
+                    println("Hubo un error: ${response.status}")
+                    onResult(null)
+                }
+            } catch (e: Exception) {
+                println("Hubo un error")
+                println(e)
+                onResult(null)
+            }
         }
-    ]
+    }
 }
-"""

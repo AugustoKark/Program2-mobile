@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 @Composable
 fun MisComprasScreen(navController: NavController,viewModel: MisComprasViewModel = viewModel()) {
     val ventas by viewModel.ventas.collectAsState()
+    val token = viewModel.settings.getString("jwtToken", "")
 
     Column(
         modifier = Modifier
@@ -30,7 +31,7 @@ fun MisComprasScreen(navController: NavController,viewModel: MisComprasViewModel
         Text("Mis Compras", style = MaterialTheme.typography.h4, color = Color(0xFF438ea5), fontWeight = FontWeight.Bold)
         LazyColumn {
             items(ventas) { venta ->
-                ExpandableCard(venta)
+                ExpandableCard(venta, token, viewModel)
             }
         }
     }

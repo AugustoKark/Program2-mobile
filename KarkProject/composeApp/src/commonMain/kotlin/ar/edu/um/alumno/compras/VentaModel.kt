@@ -2,6 +2,9 @@
 
 package ar.edu.um.alumno.compras
 
+import ar.edu.um.alumno.comprasAdmin.AdicionalAdmin
+import ar.edu.um.alumno.comprasAdmin.CaracteristicaAdmin
+import ar.edu.um.alumno.comprasAdmin.PersonalizacionAdmin
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.*
@@ -22,9 +25,9 @@ data class VentaDetallada(
     val descripcion: String,
     val precioBase: Double,
     val moneda: String,
-    val caracteristicas: List<Caracteristica>,
-    val personalizaciones: List<Personalizacion>,
-    val adicionales: List<Adicional>
+    val caracteristicas: List<Caracteristica>? = emptyList(),
+    val personalizaciones: List<Personalizacion>? = emptyList(),
+    val adicionales: List<Adicional>? = emptyList()
 )
 
 @Serializable
@@ -36,16 +39,15 @@ data class Caracteristica(
 
 @Serializable
 data class Personalizacion(
-    val id: Int,
-    val nombre: String,
-    val descripcion: String,
-    @Serializable(with = OpcionListSerializer::class)
-    val opciones: List<Opcion>
+    val id: Int?,
+    val nombre: String?,
+    val descripcion: String?,
+    val opcion: Opcion?
 )
 
 @Serializable
 data class Opcion(
-    val id: Int,
+    val id: Int?,
     val codigo: String?,
     val nombre: String,
     val descripcion: String,
