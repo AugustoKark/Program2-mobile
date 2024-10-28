@@ -25,6 +25,10 @@ class ProductoViewModel : ViewModel() {
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
     val productos: StateFlow<List<Producto>> = _productos
 
+
+    private val _roles = MutableStateFlow<List<String>>(emptyList())
+    val roles: StateFlow<List<String>> = _roles
+
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -33,6 +37,14 @@ class ProductoViewModel : ViewModel() {
         }
     }
 
+    init {
+        loadRoles()
+    }
+
+    private fun loadRoles() {
+        val rolesString = settings.getString("roles", "")
+        _roles.value = rolesString.split(",").filter { it.isNotEmpty() }
+    }
 
     private val viewModelScope = CoroutineScope(Job() + Dispatchers.Main)
 

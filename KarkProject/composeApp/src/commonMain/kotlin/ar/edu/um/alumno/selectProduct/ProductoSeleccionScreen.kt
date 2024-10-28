@@ -31,6 +31,8 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoViewModel = viewModel()) {
     val productos by viewModel.productos.collectAsState()
+    val roles by viewModel.roles.collectAsState()
+
 
 
 
@@ -51,6 +53,7 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
             Spacer(modifier = Modifier.height(16.dp))  // Espacio entre cada producto
         }
     }
+        if (roles.contains("ROLE_USER")) {
     Button(
         onClick = { navController.navigate("misCompras") },
         modifier = Modifier
@@ -63,21 +66,22 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
 
     ) {
         Text("Mis Compras")
-    }
-        Button(
-            onClick = { navController.navigate("misComprasAdmin") },
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFF438ea5),  // Color de fondo del botón
-                contentColor = Color.White
-            )
+    }}
+        if(roles.contains("ROLE_ADMIN")) {
+            Button(
+                onClick = { navController.navigate("misComprasAdmin") },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF438ea5),  // Color de fondo del botón
+                    contentColor = Color.White
+                )
 
-        ) {
-            Text("Mis ComprasAdmin")
+            ) {
+                Text("Mis ComprasAdmin")
+            }
         }
-
 }
 }
 
