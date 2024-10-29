@@ -83,6 +83,18 @@ fun ProductoSeleccionScreen(navController: NavController, viewModel: ProductoVie
                 Text("Mis ComprasAdmin")
             }
         }
+        Button(
+            onClick = { navController.navigate("logout") },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Red,  // Color de fondo del botón
+                contentColor = Color.White
+            )
+        ) {
+            Text("Log out")
+        }
 }
 }
 

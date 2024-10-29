@@ -27,18 +27,30 @@ fun MisComprasScreenAdmin(navController: NavController, viewModel: MisComprasVie
     val ventas by viewModel.ventas.collectAsState()
     val token = viewModel.settings.getString("jwtToken", "")
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Mis Compras Admin", style = MaterialTheme.typography.h4, color = Color(0xFF438ea5), fontWeight = FontWeight.Bold)
-        LazyColumn {
-            items(ventas) { venta ->
-                ExpandableCardAdmin(venta, token, viewModel)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text("Mis Compras Admin", style = MaterialTheme.typography.h4, color = Color(0xFF438ea5), fontWeight = FontWeight.Bold)
+            LazyColumn {
+                items(ventas) { venta ->
+                    ExpandableCardAdmin(venta, token, viewModel)
+                }
             }
+        }
+        Button(
+            onClick = { navController.navigate("logout") },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Red,  // Color de fondo del botón
+                contentColor = Color.White
+            )
+        ) {
+            Text("Log out")
         }
     }
 }

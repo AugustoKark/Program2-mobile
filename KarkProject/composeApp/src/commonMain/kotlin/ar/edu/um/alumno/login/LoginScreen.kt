@@ -38,6 +38,8 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavContr
     val password: String by viewModel.password.collectAsState()
     val loginEnable: Boolean by viewModel.loginEnable.collectAsState(initial = false)
     val coroutineScope = rememberCoroutineScope()
+    val errorMessage: String? by viewModel.errorMessage.collectAsState()
+
 
     LazyColumn(
         modifier = modifier
@@ -55,6 +57,13 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navController: NavContr
                 ForgotPassword(Modifier.align(Alignment.CenterEnd))
             }
             Spacer(modifier = Modifier.padding(4.dp))
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
             LoginButton(loginEnable, navController, viewModel)
 
             Spacer(modifier = Modifier.padding(6.dp))

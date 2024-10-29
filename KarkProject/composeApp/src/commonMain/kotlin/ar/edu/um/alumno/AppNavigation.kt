@@ -19,7 +19,7 @@ import ar.edu.um.alumno.login.LoginViewModel
 import ar.edu.um.alumno.selectProduct.*
 import ar.edu.um.alumno.selectProduct.SuccessScreen
 import ar.edu.um.alumno.selectProduct.FailureScreen
-
+import ar.edu.um.alumno.logout.LogoutScreen
 
 
 
@@ -54,6 +54,9 @@ fun AppNavigation() {
             SuccessScreen(navController = navController) }
         composable("failureScreen") {
             FailureScreen(navController = navController) }
+        composable("logout") {
+            LogoutScreen(navController, viewModel()) }
+
 
     }
 }

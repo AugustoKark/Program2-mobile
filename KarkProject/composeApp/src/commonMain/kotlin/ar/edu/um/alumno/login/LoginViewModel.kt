@@ -63,6 +63,10 @@ class LoginViewModel : ViewModel() {
     private val _roles = MutableStateFlow<List<String>>(emptyList())
     val roles: StateFlow<List<String>> = _roles
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
+
 //    init {
 //
 //        _jwtToken.value = settings.getString("jwtToken", null.toString())
@@ -87,6 +91,15 @@ class LoginViewModel : ViewModel() {
         return response != null
     }
 
+    fun logout() {
+        settings.putString("jwtToken", "")
+        settings.putInt("userId", -1)
+        settings.putString("roles", "")
+        _jwtToken.value = null
+        _userId.value = null
+        _roles.value = emptyList()
+    }
+
 
     suspend fun authenticate(username: String, password: String): AuthResponse? {
         val response: HttpResponse = client.post("http://192.168.100.71:8080/api/authenticate") {
@@ -104,10 +117,14 @@ class LoginViewModel : ViewModel() {
             println(jwtToken.value)
             println(userId.value)
             println(roles.value)
+            _errorMessage.value = null
+
 
             authResponse
         } else {
             println("Error: ${response.status}")
+            _errorMessage.value = "Username o contraseña incorrectos"
+
             null
         }
     }
