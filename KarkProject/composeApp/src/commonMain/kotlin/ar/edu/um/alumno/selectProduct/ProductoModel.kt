@@ -49,6 +49,7 @@ data class Adicional(
 
 @Serializable
 data class VentaRequest(
+    val userId: Int,
     val idDispositivo: Int,
     val personalizaciones: List<OpcionSeleccionada>,
     val adicionales: List<AdicionalRequest>,

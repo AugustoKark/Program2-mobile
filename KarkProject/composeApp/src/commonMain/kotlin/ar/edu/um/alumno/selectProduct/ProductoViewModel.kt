@@ -97,12 +97,17 @@ class ProductoViewModel : ViewModel() {
                     client.post("http://192.168.100.71:8080/api/ventas/vender") {
                         headers {
                             append(HttpHeaders.Authorization, "Bearer $token")
+                            append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+
                         }
                         setBody(venta)
+
+                        println(setBody(venta))
+                        println("----------------------------------------")
                         println(venta)
                     }
                 if (response.status == HttpStatusCode.OK) {
-                    println("estoy pasando por aqui")
+                    println("estoy pasando por aqui OK")
                     onResult(true)
                 } else {
                     println("no se hizo la compra macho")

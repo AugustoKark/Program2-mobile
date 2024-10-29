@@ -112,6 +112,7 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
     onClick = {
         val userId = viewModel.settings.getInt("userId", -1)
         val ventaRequest = VentaRequest(
+            userId = userId,
             idDispositivo = prod.id,
             personalizaciones = selectedOptions.values.map { OpcionSeleccionada(it.id, it.precioAdicional) },
             adicionales = selectedAdicionales.map { AdicionalRequest(it.id, it.precio) },
