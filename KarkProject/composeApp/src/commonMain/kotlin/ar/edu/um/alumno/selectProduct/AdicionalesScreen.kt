@@ -15,6 +15,10 @@ import ar.edu.um.alumno.selectProduct.format
 
 @Composable
 fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: ProductoViewModel = viewModel()) {
+    LaunchedEffect(Unit) {
+        viewModel.loadProductos()
+    }
+
     val productos by viewModel.productos.collectAsState()
     val producto = productos.find { it.id == productoId }
 
@@ -47,7 +51,7 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
         ) {
             // Título
             Text(
-                text = "Precio Total: ${producto.moneda} ${totalPrice.format(2)}",
+                text = "Precio Total: ${prod.moneda} ${totalPrice.format(2)}",
                 style = MaterialTheme.typography.h4.copy(
                     color = Color(0xFF438ea5),
                     fontSize = 22.sp,
@@ -105,18 +109,31 @@ fun AdicionalesScreen(productoId: Int, navController: NavController, viewModel: 
 
             // Botón para confirmar la selección de personalizaciones
             Button(
-                onClick = {
-                    // Aquí puedes realizar la lógica de confirmación o pasar al siguiente paso
-                    navController.navigate("productos") // Redirige a otra pantalla o confirma la compra
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color(0xFF438ea5),  // Cambiar color del botón "Buy"
-                    contentColor = Color.White
-                )
-            ) {
-                Text(text = "Confirmar selección")
+    onClick = {
+        val userId = viewModel.settings.getInt("userId", -1)
+        val ventaRequest = VentaRequest(
+            idDispositivo = prod.id,
+            personalizaciones = selectedOptions.values.map { OpcionSeleccionada(it.id, it.precioAdicional) },
+            adicionales = selectedAdicionales.map { AdicionalRequest(it.id, it.precio) },
+            precioFinal = totalPrice,
+            fechaVenta = "2024-10-10T20:15:00Z" // Reemplaza con la fecha real
+        )
+        viewModel.realizarVenta(ventaRequest) { success ->
+            if (success) {
+                navController.navigate("successScreen")
+            } else {
+                navController.navigate("failureScreen")
             }
+        }
+    },
+    modifier = Modifier.fillMaxWidth(),
+    colors = ButtonDefaults.buttonColors(
+        backgroundColor = Color(0xFF438ea5),  // Cambiar color del botón "Buy"
+        contentColor = Color.White
+    )
+) {
+    Text(text = "Confirmar selección")
+}
         }
     } ?: run {
         // Mostrar un texto si el producto no existe

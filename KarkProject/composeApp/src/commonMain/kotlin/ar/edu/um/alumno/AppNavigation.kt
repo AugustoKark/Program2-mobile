@@ -16,6 +16,10 @@ import ar.edu.um.alumno.createaccount.RegisterScreen
 import ar.edu.um.alumno.createaccount.RegisterViewModel
 import ar.edu.um.alumno.login.LoginScreen
 import ar.edu.um.alumno.login.LoginViewModel
+import ar.edu.um.alumno.selectProduct.*
+import ar.edu.um.alumno.selectProduct.SuccessScreen
+import ar.edu.um.alumno.selectProduct.FailureScreen
+
 
 
 
@@ -46,6 +50,10 @@ fun AppNavigation() {
         composable("misComprasAdmin") {
             MisComprasScreenAdmin(navController = navController)
         }
+        composable("successScreen") {
+            SuccessScreen(navController = navController) }
+        composable("failureScreen") {
+            FailureScreen(navController = navController) }
 
     }
 }

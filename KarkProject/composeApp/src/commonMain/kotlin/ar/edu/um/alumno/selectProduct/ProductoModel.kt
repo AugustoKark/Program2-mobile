@@ -45,3 +45,25 @@ data class Adicional(
     val precio: Double,
     val precioGratis: Double
 )
+
+
+@Serializable
+data class VentaRequest(
+    val idDispositivo: Int,
+    val personalizaciones: List<OpcionSeleccionada>,
+    val adicionales: List<AdicionalRequest>,
+    val precioFinal: Double,
+    val fechaVenta: String
+)
+
+@Serializable
+data class AdicionalRequest(
+    val id: Int,
+    val precio: Double
+)
+
+@Serializable
+data class OpcionSeleccionada(
+    val id: Int,
+    val precioAdicional: Double
+)
