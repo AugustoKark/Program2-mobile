@@ -90,8 +90,8 @@ class RegisterViewModel : ViewModel() {
     private fun isValidEmail(email: String): Boolean = emailPattern.matches(email)
 
     suspend fun onRegisterSelected(): Boolean {
-        _isLoading.value = true
         return try {
+
             val response: HttpResponse = client.post("http://192.168.100.71:8080/api/register") {
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -103,18 +103,21 @@ class RegisterViewModel : ViewModel() {
                     )
                 )
             }
+            _isLoading.value = true
+
             if (response.status == HttpStatusCode.Created) {
                 true
             } else {
                 val errorResponse: RegisterErrorResponse = response.body()
                 _errorMessage.value = when (errorResponse.message) {
                     "error.userexists" -> "El nombre de usuario ya está en uso."
+                    "error.emailexists" -> "El email ya está en uso."
                     else -> "Error en el registro: ${errorResponse.title}"
                 }
                 false
             }
         } catch (e: Exception) {
-            _errorMessage.value = "Error en el registro: ${e.message}"
+            _errorMessage.value = "Error en el registro intente nuevamente "
             false
         } finally {
             _isLoading.value = false
