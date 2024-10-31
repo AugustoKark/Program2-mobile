@@ -25,6 +25,9 @@ import io.ktor.http.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 
 @Serializable
@@ -91,6 +94,7 @@ class RegisterViewModel : ViewModel() {
 
     suspend fun onRegisterSelected(): Boolean {
         return try {
+            logger.info { "LOG: Registering user -------------------------" }
 
             val response: HttpResponse = client.post("http://192.168.100.71:8080/api/register") {
                 contentType(ContentType.Application.Json)
@@ -106,20 +110,25 @@ class RegisterViewModel : ViewModel() {
             _isLoading.value = true
 
             if (response.status == HttpStatusCode.Created) {
+                logger.info { "LOG: User registered  -------------------------" }
                 true
             } else {
                 val errorResponse: RegisterErrorResponse = response.body()
+
                 _errorMessage.value = when (errorResponse.message) {
                     "error.userexists" -> "El nombre de usuario ya está en uso."
                     "error.emailexists" -> "El email ya está en uso."
                     else -> "Error en el registro: ${errorResponse.title}"
                 }
+                logger.error { "LOG: ERROR: ${errorResponse.message} -------------------------" }
                 false
             }
         } catch (e: Exception) {
             _errorMessage.value = "Error en el registro intente nuevamente "
+            logger.error { "LOG: ERROR: ${e.message} -------------------------" }
             false
         } finally {
+            logger.info { "LOG: Registering user finished -------------------------" }
             _isLoading.value = false
         }
     }

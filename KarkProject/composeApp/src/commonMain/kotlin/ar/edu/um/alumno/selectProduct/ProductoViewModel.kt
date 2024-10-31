@@ -21,6 +21,11 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import mu.KotlinLogging
+
+
+private val logger = KotlinLogging.logger {}
+
 
 
 class ProductoViewModel : ViewModel() {
@@ -49,6 +54,7 @@ class ProductoViewModel : ViewModel() {
     private fun loadRoles() {
         val rolesString = settings.getString("roles", "")
         _roles.value = rolesString.split(",").filter { it.isNotEmpty() }
+        logger.info { "LOG: Roles cargados -------------------------" }
     }
 
     private val viewModelScope = CoroutineScope(Job() + Dispatchers.Main)
@@ -56,15 +62,18 @@ class ProductoViewModel : ViewModel() {
     fun loadProductos() {
         val token = settings.getString("jwtToken", "")
         if (token != null) {
-            println("Token: $token")
+            logger.info { "LOG: Token cargado -------------------------" }
+//            println("Token: $token")
             fetchDispositivos(token)
         } else {
-            println("No hay token")
+            logger.info { "LOG: No hay token -------------------------" }
+//            println("No hay token")
         }
     }
 
     private fun fetchDispositivos(token: String) {
         viewModelScope.launch {
+            logger.info { "LOG: fetchDispositivos -------------------------" }
             try {
                 val response: HttpResponse =
                     client.get("http://192.168.100.71:8080/api/dispositivos") {
@@ -75,14 +84,18 @@ class ProductoViewModel : ViewModel() {
                 if (response.status == HttpStatusCode.OK) {
                     val dispositivos: List<Producto> = response.body()
                     _productos.value = dispositivos
-                    println(dispositivos)
+                    logger.info { "LOG: Dispositivos cargados -------------------------" }
+//                    println(dispositivos)
                 } else {
-                    println("hubo un error")
+//                    println("hubo un error")
                     // Handle error response
+                    logger.error { "LOG: Hubo un error -------------------------" }
                 }
             } catch (e: Exception) {
-                println("hubo un error")
-                println(e)
+                logger.error { "LOG: Hubo un error -------------------------" }
+                logger.error { e }
+//                println("hubo un error")
+//                println(e)
                 // Handle exception
             }
         }
@@ -92,6 +105,7 @@ class ProductoViewModel : ViewModel() {
     fun realizarVenta(venta: VentaRequest, onResult: (Boolean) -> Unit) {
         val token = settings.getString("jwtToken", "")
         viewModelScope.launch {
+            logger.info { "LOG: Realizando venta -------------------------" }
             try {
                 val response: HttpResponse =
                     client.post("http://192.168.100.71:8080/api/ventas/vender") {
@@ -107,14 +121,18 @@ class ProductoViewModel : ViewModel() {
                         println(venta)
                     }
                 if (response.status == HttpStatusCode.OK) {
-                    println("estoy pasando por aqui OK")
+                    logger.info { "LOG: Venta realizada con exito -------------------------" }
+//                    println("estoy pasando por aqui OK")
                     onResult(true)
                 } else {
-                    println("no se hizo la compra macho")
+                    logger.error { "LOG: No se hizo la compra -------------------------" }
+//                    println("no se hizo la compra macho")
                     onResult(false)
                 }
             } catch (e: Exception) {
-                println("hubo un error"+e)
+                logger.error { "LOG: Hubo un error -------------------------" }
+                logger.error { e }
+//                println("hubo un error"+e)
                 onResult(false)
             }
         }

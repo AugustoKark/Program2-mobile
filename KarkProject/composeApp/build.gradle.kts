@@ -64,6 +64,8 @@ kotlin {
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
             implementation("com.russhwolf:multiplatform-settings:0.8.1")
             implementation(libs.settings)
+            implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
+
         }
 
         desktopMain.dependencies {

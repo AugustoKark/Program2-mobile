@@ -31,6 +31,9 @@ import io.ktor.client.call.*
 import com.russhwolf.settings.Settings
 
 
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 class MisComprasViewModelAdmin : ViewModel() {
 
@@ -56,14 +59,17 @@ class MisComprasViewModelAdmin : ViewModel() {
         val token = settings.getString("jwtToken", "")
         if (token.isNotEmpty()) {
             fetchVentas(token)
+            logger.info { "LOG: Ventas cargadas -------------------------" }
         } else {
-            println("No hay token")
+            logger.info { "LOG: No hay token -------------------------" }
+//            println("No hay token")
         }
     }
 
     private fun fetchVentas(token: String) {
         viewModelScope.launch {
             try {
+                logger.info { "LOG: Fetching ventas -------------------------" }
                 val response: HttpResponse = client.get("http://192.168.100.71:8080/api/ventas/admin") {
                     headers {
                         append(HttpHeaders.Authorization, "Bearer $token")
@@ -72,13 +78,17 @@ class MisComprasViewModelAdmin : ViewModel() {
                 if (response.status == HttpStatusCode.OK) {
                     val ventas: List<VentaSimpleAdmin> = response.body()
                     _ventas.value = ventas
-                    println(ventas)
+                    logger.info { "LOG: Ventas cargadas -------------------------" }
+//                    println(ventas)
                 } else {
-                    println("Hubo un error: ${response.status}")
+                    logger.info { "LOG: Hubo un error -------------------------" }
+//                    println("Hubo un error: ${response.status}")
                 }
             } catch (e: Exception) {
-                println("Hubo un error")
-                println(e)
+                logger.info { "LOG: Hubo un error -------------------------" }
+                logger.info { e }
+//                println("Hubo un error")
+//                println(e)
             }
         }
     }
@@ -87,21 +97,28 @@ class MisComprasViewModelAdmin : ViewModel() {
    fun fetchVentaDetallada(idVenta: Int, token: String, onResult: (VentaDetalladaAdmin?) -> Unit) {
     viewModelScope.launch {
         try {
+            logger.info { "LOG: Fetching venta detallada -------------------------" }
             val response: HttpResponse = client.get("http://192.168.100.71:8080/api/ventas/profesor/$idVenta") {
                 headers {
                     append(HttpHeaders.Authorization, "Bearer $token")
                 }
             }
             if (response.status == HttpStatusCode.OK) {
+
                 val ventaDetallada: VentaDetalladaAdmin = response.body()
                 onResult(ventaDetallada)
+                logger.info { "LOG: Venta detallada cargada -------------------------" }
             } else {
-                println("Hubo un error: ${response.status}")
+//                println("Hubo un error: ${response.status}")
+                logger.error { "LOG: Hubo un error -------------------------" }
                 onResult(null)
             }
         } catch (e: Exception) {
-            println("Hubo un error")
-            println(e)
+            logger.error { "LOG: Hubo un error -------------------------" }
+            logger.error { e }
+
+//            println("Hubo un error")
+//            println(e)
             onResult(null)
         }
     }

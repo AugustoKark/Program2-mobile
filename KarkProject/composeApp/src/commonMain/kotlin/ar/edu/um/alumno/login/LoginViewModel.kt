@@ -16,9 +16,13 @@ import io.ktor.client.plugins.contentnegotiation.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import io.ktor.serialization.kotlinx.json.*
+import mu.KotlinLogging
+
 
 
 private val settings: Settings = Settings()
+private val logger = KotlinLogging.logger {}
+
 
 @Serializable
 data class AuthRequest(val username: String, val password: String)
@@ -102,6 +106,7 @@ class LoginViewModel : ViewModel() {
 
 
     suspend fun authenticate(username: String, password: String): AuthResponse? {
+        logger.info { "LOG: Authenticating user ----------------------------" }
         val response: HttpResponse = client.post("http://192.168.100.71:8080/api/authenticate") {
             contentType(ContentType.Application.Json)
             setBody(AuthRequest(username, password))
@@ -114,15 +119,18 @@ class LoginViewModel : ViewModel() {
             settings.putInt("userId", authResponse.userId)
             _roles.value = authResponse.roles
             settings.putString("roles", authResponse.roles.joinToString(","))
-            println(jwtToken.value)
-            println(userId.value)
-            println(roles.value)
+//            println(jwtToken.value)
+//            println(userId.value)
+//            println(roles.value)
             _errorMessage.value = null
+            logger.info { "LOG: User authenticated ----------------------------" }
 
 
             authResponse
         } else {
-            println("Error: ${response.status}")
+//            println("Error: ${response.status}")
+            logger.info { "LOG: Error authenticating user ----------------------------" }
+            logger.error { "Error: ${response.status}" }
             _errorMessage.value = "Username o contraseña incorrectos"
 
             null

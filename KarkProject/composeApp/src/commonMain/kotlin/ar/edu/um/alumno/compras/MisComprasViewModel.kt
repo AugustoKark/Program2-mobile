@@ -22,6 +22,7 @@ import kotlinx.coroutines.Job
 import io.ktor.client.*
 import io.ktor.client.call.*
 import androidx.lifecycle.viewModelScope
+import mu.KotlinLogging
 
 
 
@@ -35,6 +36,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+private val logger = KotlinLogging.logger {}
 
 class MisComprasViewModel : ViewModel() {
 
@@ -60,14 +62,17 @@ class MisComprasViewModel : ViewModel() {
         val userId = settings.getInt("userId", -1)
         if (token.isNotEmpty() && userId != -1) {
             fetchVentasUsuario(userId, token)
+            logger.info { "LOG: Ventas cargadas -------------------------" }
         } else {
-            println("No hay token o ID de usuario")
+            logger.info { "LOG: No hay token o ID de usuario -------------------------" }
+//            println("No hay token o ID de usuario")
         }
     }
 
     private fun fetchVentasUsuario(userId: Int, token: String) {
         viewModelScope.launch {
             try {
+                logger.info { "LOG: Fetching ventas -------------------------" }
                 val response: HttpResponse = client.get("http://192.168.100.71:8080/api/ventas/usuario/$userId") {
                     headers {
                         append(HttpHeaders.Authorization, "Bearer $token")
@@ -76,13 +81,17 @@ class MisComprasViewModel : ViewModel() {
                 if (response.status == HttpStatusCode.OK) {
                     val ventas: List<VentaSimple> = response.body()
                     _ventas.value = ventas
-                    println(ventas)
+                    logger.info { "LOG: Ventas cargadas -------------------------" }
+//                    println(ventas)
                 } else {
-                    println("Hubo un error: ${response.status}")
+                    logger.error { "LOG: Hubo un error: ${response.status}" }
+//                    println("Hubo un error: ${response.status}")
                 }
             } catch (e: Exception) {
-                println("Hubo un error")
-                println(e)
+                logger.error { "LOG: Hubo un error -------------------------" }
+                logger.error { e }
+//                println("Hubo un error")
+//                println(e)
             }
         }
     }
@@ -90,6 +99,7 @@ class MisComprasViewModel : ViewModel() {
     fun fetchVentaDetallada(idVenta: Int, token: String, onResult: (VentaDetallada?) -> Unit) {
         viewModelScope.launch {
             try {
+                logger.info { "LOG: Fetching venta detallada -------------------------" }
                 val response: HttpResponse = client.get("http://192.168.100.71:8080/api/ventas/profesor/$idVenta") {
                     headers {
                         append(HttpHeaders.Authorization, "Bearer $token")
@@ -97,14 +107,18 @@ class MisComprasViewModel : ViewModel() {
                 }
                 if (response.status == HttpStatusCode.OK) {
                     val ventaDetallada: VentaDetallada = response.body()
+                    logger.info { "LOG: Venta detallada cargada -------------------------" }
                     onResult(ventaDetallada)
                 } else {
-                    println("Hubo un error: ${response.status}")
+//                    println("Hubo un error: ${response.status}")
+                    logger.error { "LOG: Hubo un error: ${response.status}" }
                     onResult(null)
                 }
             } catch (e: Exception) {
-                println("Hubo un error")
-                println(e)
+                logger.error { "LOG: Hubo un error -------------------------" }
+                logger.error { e }
+//                println("Hubo un error")
+//                println(e)
                 onResult(null)
             }
         }
